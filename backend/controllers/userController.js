@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const generateToken = require('../utils/generateToken');
 
 const registerUser = async (req, res) => {
     try {
@@ -10,7 +11,8 @@ const registerUser = async (req, res) => {
                 _id: user._id,
                 userName: user.userName,
                 email: user.email,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                token: generateToken(user._id)
             }
         });
 
@@ -34,7 +36,8 @@ const loginUser = async (req, res) => {
                 _id: user._id,
                 userName: user.userName,
                 email: user.email,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                token: generateToken(user._id)
             }
         });
     } catch (error) {
@@ -45,7 +48,20 @@ const loginUser = async (req, res) => {
     }
 };
 
+const getUserProfile = async (req, res) => {
+    res.status(200).json({
+        success: true,
+        data: {
+            _id: req.user._id,
+            userName: req.user.userName,
+            email: req.user.email,
+            isAdmin: req.user.isAdmin
+        }
+    })
+};
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getUserProfile
 }
