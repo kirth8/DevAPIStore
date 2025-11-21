@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const userRoutes = require('./routes/userRoutes');
 require('dotenv').config();
 
 // Initialize Express app
@@ -14,6 +15,10 @@ app.use(cors()); // Enable CORS
 app.use(morgan('dev')); // Request logging
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+// Routes
+app.use('/api/users', userRoutes);
+
 
 // Basic Route for testing
 app.get('/', (req, res) => {
