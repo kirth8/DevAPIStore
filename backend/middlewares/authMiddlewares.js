@@ -16,7 +16,7 @@ const protect = async (req, res, next) => {
             // 4. Buscar al usuario en la DB y adjuntarlo a la petición (req.user)
             // .select('-password') significa "trae todo MENOS la contraseña"
             req.user = await User.findById(decoded.id).select('-password');
-            next(); // ¡Pase usted!
+            next();
         } catch (error) {
             res.status(401).json({
                 success: false,
@@ -31,4 +31,16 @@ const protect = async (req, res, next) => {
         });
     }
 };
-module.exports = { protect };
+
+const admin = (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
+        next();
+    } else {
+        res.status(401).json({
+            success: false,
+            message: 'No autorizado como administrador'
+        });
+    }
+};
+
+module.exports = { protect, admin };
