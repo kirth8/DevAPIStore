@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { getProducts, getProductById } = require('../controllers/productController');
+const { getProducts, getProductById, createProduct, updateProduct, deleteProduct } = require('../controllers/productController');
 
 // Ruta para ver todos (GET /api/products)
-router.get('/', getProducts);
+router.route('/')
+    .get(getProducts)
+    .post(createProduct);
 
 // Ruta para ver uno solo (GET /api/products/:id)
-router.get('/:id', getProductById);
+router.route('/:id')
+    .get(getProductById)
+    .put(updateProduct)
+    .delete(deleteProduct);
 
 module.exports = router;
