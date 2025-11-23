@@ -5,12 +5,12 @@ const { protect, admin } = require('../middlewares/authMiddlewares');
 
 // Ruta para ver todos (GET /api/products)
 router.route('/')
-    .get(protect, getProducts)
+    .get(getProducts)
     .post(protect, admin, createProduct);
 
 // Ruta para ver uno solo (GET /api/products/:id)
 router.route('/:id')
-    .get(protect, admin, getProductById)
+    .get(getProductById)
     .put(protect, admin, updateProduct)
     .delete(protect, admin, deleteProduct);
 

@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 require('dotenv').config();
 
 // Initialize Express app
@@ -20,12 +22,15 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
-
+app.use('/api/uploads', uploadRoutes);
 
 // Basic Route for testing
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to DevAPIStore Backend!' });
 });
+
+const dirname = path.resolve();
+app.use('/uploads', express.static(path.join(dirname, '/uploads')));
 
 // Database Connection
 const connectDB = require('./config/db');
