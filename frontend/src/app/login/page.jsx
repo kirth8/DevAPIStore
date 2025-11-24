@@ -1,27 +1,37 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { setCredentials } from '../../slices/authSlice';
+
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get('redirect') || '/';
+
     const dispatch = useDispatch();
+
     // Obtenemos el usuario del estado global
     const { userInfo } = useSelector((state) => state.auth);
-    // Si ya está logueado, lo mandamos al home
+
+    // Si ya está logueado, lo mandamos a la url de redirección o al home
     useEffect(() => {
         if (userInfo) {
-            router.push('/');
+            router.push(redirect);
         }
-    }, [userInfo, router]);
+    }, [userInfo, redirect, router]);
+
     const submitHandler = async (e) => {
         e.preventDefault();
         setError('');
+
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL;
             // Hacemos la petición de Login
@@ -29,15 +39,17 @@ export default function LoginPage() {
                 email,
                 password,
             });
+
             // Si todo sale bien, guardamos en Redux y localStorage
             dispatch(setCredentials(data.data));
-            router.push('/');
+            router.push(redirect);
 
         } catch (err) {
             // Mostramos el error si falla (ej: contraseña incorrecta)
             setError(err.response?.data?.message || 'Error al iniciar sesión');
         }
     };
+
     return (
         <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-md">
@@ -46,11 +58,13 @@ export default function LoginPage() {
                         Inicia Sesión
                     </h2>
                 </div>
+
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
                         {error}
                     </div>
                 )}
+
                 <form className="mt-8 space-y-6" onSubmit={submitHandler}>
                     <div className="-space-y-px rounded-md shadow-sm">
                         <div>
@@ -74,6 +88,7 @@ export default function LoginPage() {
                             />
                         </div>
                     </div>
+
                     <div>
                         <button
                             type="submit"
@@ -83,6 +98,7 @@ export default function LoginPage() {
                         </button>
                     </div>
                 </form>
+
                 <div className="text-center mt-4">
                     <p className="text-sm text-gray-600">
                         ¿No tienes cuenta?{' '}

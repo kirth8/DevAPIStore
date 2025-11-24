@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 const initialState = typeof window !== 'undefined' && localStorage.getItem('cart')
     ? JSON.parse(localStorage.getItem('cart'))
-    : { cartItems: [], itemsPrice: 0, shippingPrice: 0, taxPrice: 0, totalPrice: 0 };
+    : { cartItems: [], shippingAddress: {}, paymentMethod: 'PayPal', itemsPrice: 0, shippingPrice: 0, taxPrice: 0, totalPrice: 0 };
 const addDecimals = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
 };
@@ -19,18 +19,11 @@ const cartSlice = createSlice({
             } else {
                 state.cartItems = [...state.cartItems, item];
             }
-            // Calcular precios
             state.itemsPrice = addDecimals(
                 state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
             );
-
-            // Envío: Si compra más de $100 es gratis, si no $10
             state.shippingPrice = addDecimals(state.itemsPrice > 100 ? 0 : 10);
-
-            // Impuesto (ejemplo 15%)
             state.taxPrice = addDecimals(Number((0.15 * state.itemsPrice).toFixed(2)));
-
-            // Total Final
             state.totalPrice = (
                 Number(state.itemsPrice) +
                 Number(state.shippingPrice) +
@@ -41,7 +34,6 @@ const cartSlice = createSlice({
         removeFromCart: (state, action) => {
             state.cartItems = state.cartItems.filter((x) => x._id !== action.payload);
 
-            // Recalcular precios (copiar lógica de arriba o extraer función)
             state.itemsPrice = addDecimals(
                 state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
             );
@@ -54,7 +46,15 @@ const cartSlice = createSlice({
             ).toFixed(2);
             localStorage.setItem('cart', JSON.stringify(state));
         },
+        saveShippingAddress: (state, action) => {
+            state.shippingAddress = action.payload;
+            localStorage.setItem('cart', JSON.stringify(state));
+        },
+        savePaymentMethod: (state, action) => {
+            state.paymentMethod = action.payload;
+            localStorage.setItem('cart', JSON.stringify(state));
+        },
     },
 });
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, saveShippingAddress, savePaymentMethod } = cartSlice.actions;
 export default cartSlice.reducer;
