@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import { FaArrowLeft, FaStar, FaShoppingCart } from 'react-icons/fa';
+import AddToCart from '@/components/AddToCart';
 // Función para obtener un solo producto
 async function getProduct(id) {
     try {
@@ -71,16 +72,7 @@ export default async function ProductPage({ params }) {
                                 {product.countInStock > 0 ? 'En Stock' : 'Agotado'}
                             </span>
                         </div>
-                        <button
-                            className={`w-full flex items-center justify-center py-3 rounded-lg text-white font-semibold transition
-                ${product.countInStock > 0
-                                    ? "bg-blue-600 hover:bg-blue-700"
-                                    : "bg-gray-400 cursor-not-allowed"}`}
-                            disabled={product.countInStock === 0}
-                        >
-                            <FaShoppingCart className="mr-2" />
-                            {product.countInStock > 0 ? 'Añadir al Carrito' : 'Sin Stock'}
-                        </button>
+                        <AddToCart product={product} />
                     </div>
                 </div>
             </div>

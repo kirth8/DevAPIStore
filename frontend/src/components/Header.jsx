@@ -38,7 +38,7 @@ const Header = () => {
                     </Link>
                     {userInfo ? (
                         <div className="flex items-center space-x-4">
-                            <span className="text-blue-400 font-semibold">Hola, {userInfo.name}</span>
+                            <span className="text-blue-400 font-semibold">Hola, {userInfo.userName}</span>
                             <button
                                 onClick={logoutHandler}
                                 className="flex items-center text-red-400 hover:text-red-300 transition"

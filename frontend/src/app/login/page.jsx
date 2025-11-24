@@ -30,7 +30,7 @@ export default function LoginPage() {
                 password,
             });
             // Si todo sale bien, guardamos en Redux y localStorage
-            dispatch(setCredentials(data));
+            dispatch(setCredentials(data.data));
             router.push('/');
 
         } catch (err) {

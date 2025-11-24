@@ -35,7 +35,7 @@ export default function RegisterPage() {
                 password,
             });
             // Al registrarse, también iniciamos sesión automáticamente
-            dispatch(setCredentials(data));
+            dispatch(setCredentials(data.data));
             router.push('/');
 
         } catch (err) {
