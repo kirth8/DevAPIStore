@@ -28,7 +28,13 @@ export default function PlaceOrderPage() {
             const { data } = await axios.post(
                 `${apiUrl}/api/orders`,
                 {
-                    orderItems: cart.cartItems,
+                    orderItems: cart.cartItems.map((item) => ({
+                        product: item._id,
+                        qty: item.qty,
+                        price: item.price,
+                        name: item.name,
+                        image: item.image,
+                    })),
                     shippingAddress: cart.shippingAddress,
                     paymentMethod: cart.paymentMethod,
                     itemsPrice: cart.itemsPrice,
@@ -44,7 +50,7 @@ export default function PlaceOrderPage() {
             );
 
             alert('Orden creada con éxito (Simulación)');
-            // router.push(`/order/${data._id}`); 
+            router.push(`/order/${data.data._id}`);
 
         } catch (error) {
             alert(error.response?.data?.message || error.message);
