@@ -13,7 +13,9 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(helmet()); // Security headers
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+})); // Security headers
 app.use(cors()); // Enable CORS
 app.use(morgan('dev')); // Request logging
 app.use(express.json()); // Parse JSON bodies
