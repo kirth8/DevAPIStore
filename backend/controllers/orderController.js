@@ -39,7 +39,6 @@ const addOrderItems = async (req, res) => {
     }
 };
 
-// @desc    Get order by ID
 // @route   GET /api/orders/:id
 // @access  Private
 const getOrderById = async (req, res) => {
@@ -56,7 +55,19 @@ const getOrderById = async (req, res) => {
     }
 };
 
+// @route   GET /api/orders/myorders
+// @access  Private
+const getMyOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({ user: req.user._id });
+        res.status(200).json({ success: true, data: orders });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching orders: ' + error.message });
+    }
+};
+
 module.exports = {
     addOrderItems,
     getOrderById,
+    getMyOrders,
 };

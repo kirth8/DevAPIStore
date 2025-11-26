@@ -1,7 +1,7 @@
 const userService = require('../services/userService');
 const generateToken = require('../utils/generateToken');
 const User = require('../models/User');
-
+const bcrypt = require('bcryptjs');
 const registerUser = async (req, res) => {
     try {
         const user = await userService.registerUser(req.body);
@@ -16,7 +16,6 @@ const registerUser = async (req, res) => {
                 token: generateToken(user._id)
             }
         });
-
     } catch (error) {
         res.status(400).json({
             success: false,
@@ -24,12 +23,10 @@ const registerUser = async (req, res) => {
         });
     }
 };
-
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await userService.loginUser(email, password);
-
         res.status(200).json({
             success: true,
             message: 'Usuario logueado exitosamente',
@@ -48,7 +45,6 @@ const loginUser = async (req, res) => {
         });
     }
 };
-
 const getUserProfile = async (req, res) => {
     res.status(200).json({
         success: true,
@@ -60,7 +56,6 @@ const getUserProfile = async (req, res) => {
         }
     })
 };
-
 // @desc    Actualizar perfil del usuario (El mismo usuario)
 // @route   PUT /api/users/profile
 const updateUserProfile = async (req, res) => {
@@ -69,13 +64,14 @@ const updateUserProfile = async (req, res) => {
         if (user) {
             user.userName = req.body.userName || user.userName;
             user.email = req.body.email || user.email;
-
             if (req.body.password) {
-                // Aquí deberíamos encriptarla de nuevo si la cambia
-                // Como movimos la lógica al servicio, lo ideal sería llamar al servicio
-                // Pero por simplicidad en este paso, asumiremos que el modelo o servicio lo maneja
-                // OJO: Si quitaste el pre-save del modelo, aquí tendrías que encriptar manualmente.
-                // Para mantenerlo simple ahora, solo actualizamos campos planos.
+                console.log('Actualizando contraseña para usuario:', user._id);
+                // Encriptar contraseña manualmente
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(req.body.password, salt);
+                console.log('Contraseña encriptada y asignada');
+            } else {
+                console.log('No se envió contraseña para actualizar');
             }
             const updatedUser = await user.save();
             res.json({
