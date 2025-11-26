@@ -61,6 +61,21 @@ export default function OrderPage() {
                 alert(err.response?.data?.message || err.message);
             }
         });
+
+    };
+    const deliverHandler = async () => {
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+            await axios.put(
+                `${apiUrl}/api/orders/${orderId}/deliver`,
+                {},
+                { headers: { Authorization: `Bearer ${userInfo.token}` } }
+            );
+            alert('Orden marcada como entregada');
+            window.location.reload();
+        } catch (err) {
+            alert(err.response?.data?.message || err.message);
+        }
     };
     if (loading) return <p className="p-4">Cargando orden...</p>;
     if (error) return <p className="p-4 text-red-600">Error: {error}</p>;
@@ -95,6 +110,14 @@ export default function OrderPage() {
                             <div className="bg-red-100 text-red-800 p-3 rounded">No Pagado</div>
                         )}
                     </div>
+                    {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                        <button
+                            onClick={deliverHandler}
+                            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition mt-4"
+                        >
+                            Marcar como Entregado
+                        </button>
+                    )}
                     {/* Order Items */}
                     <div className="bg-white p-6 rounded-lg shadow-sm">
                         <h2 className="text-xl font-bold mb-4">Items de la Orden</h2>

@@ -45,14 +45,22 @@ const Header = () => {
 
                     {mounted && userInfo ? (
                         <div className="flex items-center space-x-4">
-                            {/* Botón Admin (Solo si es admin) */}
+                            {/* Botones Admin */}
                             {userInfo.isAdmin && (
-                                <Link
-                                    href="/admin/productlist"
-                                    className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition"
-                                >
-                                    Admin
-                                </Link>
+                                <>
+                                    <Link
+                                        href="/admin/productlist"
+                                        className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition"
+                                    >
+                                        Productos
+                                    </Link>
+                                    <Link
+                                        href="/admin/orderlist"
+                                        className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition"
+                                    >
+                                        Órdenes
+                                    </Link>
+                                </>
                             )}
                             {/* Enlace al Perfil */}
                             <Link href="/profile" className="text-blue-400 font-semibold hover:text-blue-300">
