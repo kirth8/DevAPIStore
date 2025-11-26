@@ -4,32 +4,48 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Link from 'next/link';
-import { FaTimes, FaUserEdit } from 'react-icons/fa';
+import { FaTimes, FaUserEdit, FaTrash } from 'react-icons/fa';
 export default function ProfilePage() {
     const [orders, setOrders] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(true);
     const router = useRouter();
     const { userInfo } = useSelector((state) => state.auth);
+    // Función para cargar órdenes
+    const fetchOrders = async () => {
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+            const { data } = await axios.get(`${apiUrl}/api/orders/myorders`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            });
+            setOrders(data.data);
+            setLoadingOrders(false);
+        } catch (error) {
+            console.error(error);
+            setLoadingOrders(false);
+        }
+    };
     useEffect(() => {
         if (!userInfo) {
             router.push('/login');
         } else {
-            const fetchOrders = async () => {
-                try {
-                    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-                    const { data } = await axios.get(`${apiUrl}/api/orders/myorders`, {
-                        headers: { Authorization: `Bearer ${userInfo.token}` },
-                    });
-                    setOrders(data.data);
-                    setLoadingOrders(false);
-                } catch (error) {
-                    console.error(error);
-                    setLoadingOrders(false);
-                }
-            };
             fetchOrders();
         }
     }, [userInfo, router]);
+    // Manejador para eliminar orden
+    const deleteHandler = async (id) => {
+        if (window.confirm('¿Estás seguro de cancelar esta orden?')) {
+            try {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+                await axios.delete(`${apiUrl}/api/orders/${id}`, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` },
+                });
+                alert('Orden cancelada exitosamente');
+                fetchOrders(); // Recargar la lista
+            } catch (err) {
+                alert(err.response?.data?.message || err.message);
+            }
+        }
+    };
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
@@ -60,7 +76,7 @@ export default function ProfilePage() {
                                 <th className="py-3 px-4 text-left">TOTAL</th>
                                 <th className="py-3 px-4 text-left">PAGADO</th>
                                 <th className="py-3 px-4 text-left">ENTREGADO</th>
-                                <th className="py-3 px-4 text-left"></th>
+                                <th className="py-3 px-4 text-left">ACCIONES</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,10 +99,19 @@ export default function ProfilePage() {
                                             <FaTimes className="text-red-600" />
                                         )}
                                     </td>
-                                    <td className="py-3 px-4">
+                                    <td className="py-3 px-4 flex items-center space-x-3">
                                         <Link href={`/order/${order._id}`} className="text-blue-600 hover:underline">
                                             Ver Detalles
                                         </Link>
+                                        {!order.isPaid && (
+                                            <button
+                                                onClick={() => deleteHandler(order._id)}
+                                                className="text-red-500 hover:text-red-700"
+                                                title="Cancelar Orden"
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

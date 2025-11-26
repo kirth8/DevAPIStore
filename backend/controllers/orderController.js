@@ -59,10 +59,30 @@ const getOrderById = async (req, res) => {
 // @access  Private
 const getMyOrders = async (req, res) => {
     try {
+        console.log('Buscando órdenes para el usuario:', req.user._id);
         const orders = await Order.find({ user: req.user._id });
+        console.log('Órdenes encontradas:', orders.length);
         res.status(200).json({ success: true, data: orders });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error fetching orders: ' + error.message });
+    }
+};
+
+const deleteOrder = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (order) {
+            if (!order.isPaid) {
+                await order.deleteOne();
+                res.json({ success: true, message: 'Orden eliminada' });
+            } else {
+                res.status(400).json({ success: false, message: 'No se puede eliminar una orden pagada' });
+            }
+        } else {
+            res.status(404).json({ success: false, message: 'Orden no encontrada' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -70,4 +90,5 @@ module.exports = {
     addOrderItems,
     getOrderById,
     getMyOrders,
+    deleteOrder,
 };
