@@ -1,23 +1,27 @@
 import ProductCard from '../components/ProductCard';
 import axios from 'axios';
 // Función para pedir los datos al Backend
-async function getProducts() {
+async function getProducts(keyword) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
+  const query = keyword ? `?keyword=${keyword}` : '';
   try {
-    const { data } = await axios.get(`${apiUrl}/api/products`);
+    const { data } = await axios.get(`${apiUrl}/api/products${query}`);
     return data.data; // Devolvemos el array de productos
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
   }
 }
-export default async function Home() {
-  const products = await getProducts();
+export default async function Home({ searchParams }) {
+  // EN NEXT.JS 15/16 searchParams ES UNA PROMESA, HAY QUE ESPERARLA
+  const { keyword } = await searchParams;
+
+  const products = await getProducts(keyword);
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Últimos Productos</h1>
-
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+        {keyword ? `Resultados para "${keyword}"` : 'Últimos Productos'}
+      </h1>
       {products.length === 0 ? (
         <p>No hay productos disponibles.</p>
       ) : (

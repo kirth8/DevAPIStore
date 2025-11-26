@@ -1,17 +1,28 @@
-'use client'; // Importante porque ahora usamos hooks
+'use client';
+
 import Link from 'next/link';
 import { FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../slices/authSlice';
 import { useRouter } from 'next/navigation';
+import SearchBox from './SearchBox';
+import { useState, useEffect } from 'react';
+
 const Header = () => {
     const { userInfo } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const logoutHandler = () => {
         dispatch(logout());
         router.push('/login');
     };
+
     return (
         <header className="bg-gray-900 text-white py-4 shadow-md">
             <div className="container mx-auto flex justify-between items-center px-4">
@@ -19,24 +30,19 @@ const Header = () => {
                 <Link href="/" className="text-2xl font-bold text-blue-400">
                     DevAPIStore
                 </Link>
-                {/* Buscador (Placeholder) */}
-                <div className="hidden md:flex bg-gray-800 rounded-lg overflow-hidden">
-                    <input
-                        type="text"
-                        placeholder="Buscar productos..."
-                        className="bg-transparent text-white px-4 py-2 outline-none w-64"
-                    />
-                    <button className="bg-blue-600 px-4 py-2 hover:bg-blue-700 transition">
-                        Buscar
-                    </button>
+
+                {/* Buscador */}
+                <div className="hidden md:flex flex-1 max-w-lg mx-6">
+                    <SearchBox />
                 </div>
+
                 {/* Menú Usuario */}
                 <div className="flex items-center space-x-6">
                     <Link href="/cart" className="flex items-center hover:text-blue-400 transition">
                         <FaShoppingCart className="mr-1" />
                         Cart
                     </Link>
-                    {userInfo ? (
+                    {mounted && userInfo ? (
                         <div className="flex items-center space-x-4">
                             <span className="text-blue-400 font-semibold">Hola, {userInfo.userName}</span>
                             <button
@@ -58,4 +64,5 @@ const Header = () => {
         </header>
     );
 };
+
 export default Header;
