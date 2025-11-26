@@ -86,9 +86,34 @@ const deleteOrder = async (req, res) => {
     }
 };
 
+// @route   PUT /api/orders/:id/pay
+// @access  Private
+const updateOrderToPaid = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (order) {
+            order.isPaid = true;
+            order.paidAt = Date.now();
+            order.paymentResult = {
+                id: req.body.id,
+                status: req.body.status,
+                update_time: req.body.update_time,
+                email_address: req.body.payer.email_address,
+            };
+            const updatedOrder = await order.save();
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ success: false, message: 'Orden no encontrada' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 module.exports = {
     addOrderItems,
     getOrderById,
     getMyOrders,
     deleteOrder,
+    updateOrderToPaid,
 };

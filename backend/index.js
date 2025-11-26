@@ -42,6 +42,11 @@ app.get('/', (req, res) => {
 const dirname = path.resolve();
 app.use('/uploads', express.static(path.join(dirname, '/uploads')));
 
+// PayPal Config Route
+app.get('/api/config/paypal', (req, res) => {
+    res.send(process.env.PAYPAL_CLIENT_ID || 'sb');
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
