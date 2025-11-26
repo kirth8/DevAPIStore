@@ -42,9 +42,22 @@ const Header = () => {
                         <FaShoppingCart className="mr-1" />
                         Cart
                     </Link>
+
                     {mounted && userInfo ? (
                         <div className="flex items-center space-x-4">
-                            <span className="text-blue-400 font-semibold">Hola, {userInfo.userName}</span>
+                            {/* Botón Admin (Solo si es admin) */}
+                            {userInfo.isAdmin && (
+                                <Link
+                                    href="/admin/productlist"
+                                    className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition"
+                                >
+                                    Admin
+                                </Link>
+                            )}
+                            {/* Enlace al Perfil */}
+                            <Link href="/profile" className="text-blue-400 font-semibold hover:text-blue-300">
+                                Hola, {userInfo.userName}
+                            </Link>
                             <button
                                 onClick={logoutHandler}
                                 className="flex items-center text-red-400 hover:text-red-300 transition"
