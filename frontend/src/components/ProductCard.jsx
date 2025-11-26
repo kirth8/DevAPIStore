@@ -33,9 +33,6 @@ const ProductCard = ({ product }) => {
                 </div>
                 <div className="mt-3 flex justify-between items-center">
                     <span className="text-xl font-bold text-gray-900">${product.price}</span>
-                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">
-                        Ver
-                    </button>
                 </div>
             </div>
         </div>
