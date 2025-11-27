@@ -149,11 +149,36 @@ const createProductReview = async (req, res) => {
     }
 };
 
+// @route   DELETE /api/products/:id/reviews
+// @access  Private
+const deleteProductReview = async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+        // Buscar la review del usuario actual
+        const reviewIndex = product.reviews.findIndex(
+            (r) => r.user.toString() === req.user._id.toString()
+        );
+        if (reviewIndex === -1) {
+            res.status(404);
+            throw new Error('Review no encontrada');
+        }
+        // Eliminar del array
+        product.reviews.splice(reviewIndex, 1);
+        product.numReviews = product.reviews.length;
+        await product.save();
+        res.status(200).json({ message: 'Review eliminada' });
+    } else {
+        res.status(404);
+        throw new Error('Producto no encontrado');
+    }
+};
+
 module.exports = {
     getProducts,
     getProductById,
     createProduct,
     updateProduct,
     deleteProduct,
-    createProductReview
+    createProductReview,
+    deleteProductReview
 }
