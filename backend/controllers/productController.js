@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 const getProducts = async (req, res) => {
     try {
@@ -110,10 +111,49 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const createProductReview = async (req, res) => {
+    const { comment } = req.body; // Solo pedimos el comentario, nada de rating
+    const product = await Product.findById(req.params.id);
+    if (product) {
+        // Verificar si ya comentó
+        const alreadyReviewed = product.reviews.find(
+            (r) => r.user.toString() === req.user._id.toString()
+        );
+        if (alreadyReviewed) {
+            res.status(400);
+            throw new Error('Ya has comentado este producto');
+        }
+        const orders = await Order.find({
+            user: req.user._id,
+            isPaid: true,
+            isDelivered: true, // Solo si ya le llegó
+            'orderItems.product': req.params.id
+        });
+        if (orders.length === 0) {
+            res.status(400);
+            throw new Error('Debes comprar y recibir este producto para poder opinar.');
+        }
+        // Crear la review
+        const review = {
+            name: req.user.userName,
+            comment,
+            user: req.user._id,
+        };
+        product.reviews.push(review);
+        product.numReviews = product.reviews.length;
+        await product.save();
+        res.status(201).json({ message: 'Review añadida' });
+    } else {
+        res.status(404);
+        throw new Error('Producto no encontrado');
+    }
+};
+
 module.exports = {
     getProducts,
     getProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    createProductReview
 }

@@ -2,6 +2,8 @@ import axios from 'axios';
 import Link from 'next/link';
 import AddToCart from '../../../components/AddToCart';
 import { FaArrowLeft } from 'react-icons/fa';
+import ReviewSection from '../../../components/ReviewSection';
+
 async function getProduct(id) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     try {
@@ -52,6 +54,7 @@ export default async function ProductPage({ params }) {
                     </div>
                 </div>
             </div>
+            <ReviewSection product={product} />
         </div>
     );
 }

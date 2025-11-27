@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { FaStar } from 'react-icons/fa';
 
 const ProductCard = ({ product }) => {
 
@@ -22,15 +21,7 @@ const ProductCard = ({ product }) => {
                     </h2>
                 </Link>
 
-                <div className="flex items-center mt-2">
-                    <div className="flex text-yellow-400">
-                        {/* Truco para pintar estrellas según el rating */}
-                        {[...Array(5)].map((_, i) => (
-                            <FaStar key={i} className={i < product.rating ? "text-yellow-400" : "text-gray-300"} />
-                        ))}
-                    </div>
-                    <span className="text-gray-600 text-sm ml-2">{product.numReviews} reviews</span>
-                </div>
+
                 <div className="mt-3 flex justify-between items-center">
                     <span className="text-xl font-bold text-gray-900">${product.price}</span>
                 </div>
