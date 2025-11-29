@@ -34,3 +34,4 @@ export default async function Home({ searchParams }) {
     </div>
   );
 }
+//npm run dev - Ejecucion del proyecto en local como desarrollador
